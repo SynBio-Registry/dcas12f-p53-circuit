@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SynBio — Open-Access Computational Synthetic Biology</title>
+<meta name="description" content="Open-access computational synthetic biology. Free genetic circuit blueprints and mathematical models for complex diseases.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0B1220;
+    --ink-2:#111A2C;
+    --line:#26314A;
+    --paper:#F5F3ED;
+    --text-dark:#14171F;
+    --muted-dark:#5B6472;
+    --soft:#93A0BE;
+    --green:#5FBF6A;
+    --green-dim:#2F4A34;
+    --amber:#E2A33D;
+    --mono:'IBM Plex Mono', ui-monospace, monospace;
+    --sans:'IBM Plex Sans', system-ui, sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--ink);
+    color:#E7E9EE;
+    font-family:var(--sans);
+    line-height:1.55;
+  }
+  a{color:inherit;}
+  img{max-width:100%;display:block;}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 24px;}
+
+  /* ---------- NAV ---------- */
+  header.nav{
+    position:sticky;top:0;z-index:20;
+    background:rgba(11,18,32,0.88);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-inner{
+    max-width:1080px;margin:0 auto;padding:14px 24px;
+    display:flex;align-items:center;justify-content:space-between;
+  }
+  .brand{
+    font-family:var(--mono);font-weight:700;font-size:15px;
+    letter-spacing:0.02em;
+    display:flex;align-items:center;gap:8px;
+  }
+  .brand .dot{width:8px;height:8px;border-radius:50%;background:var(--green);
+    box-shadow:0 0 0 3px var(--green-dim);}
+  nav.links{display:flex;gap:22px;font-family:var(--mono);font-size:13px;}
+  nav.links a{text-decoration:none;color:var(--soft);transition:color .15s;}
+  nav.links a:hover,nav.links a:focus-visible{color:#fff;}
+
+  /* ---------- HERO ---------- */
+  .hero{padding:88px 0 64px;border-bottom:1px solid var(--line);}
+  .eyebrow{
+    font-family:var(--mono);font-size:12.5px;letter-spacing:0.14em;
+    color:var(--green);text-transform:uppercase;margin:0 0 18px;
+    display:inline-flex;align-items:center;gap:10px;
+  }
+  .eyebrow::before{content:'';width:22px;height:1px;background:var(--green);display:inline-block;}
+  h1{
+    font-family:var(--mono);font-weight:700;
+    font-size:clamp(34px,5vw,56px);
+    line-height:1.08;letter-spacing:-0.01em;
+    margin:0 0 22px;max-width:15ch;
+  }
+  h1 .accent{color:var(--green);}
+  .lede{font-size:18px;color:var(--soft);max-width:56ch;margin:0 0 34px;}
+  .cta-row{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:56px;}
+  .btn{
+    font-family:var(--mono);font-size:13.5px;font-weight:600;
+    padding:13px 22px;border-radius:3px;text-decoration:none;
+    display:inline-flex;align-items:center;gap:8px;
+    border:1px solid transparent;transition:transform .12s ease, background .15s;
+  }
+  .btn-primary{background:var(--green);color:#08150B;}
+  .btn-primary:hover{transform:translateY(-1px);background:#6fd07b;}
+  .btn-ghost{border-color:var(--line);color:#E7E9EE;}
+  .btn-ghost:hover{border-color:var(--soft);}
+  .btn:focus-visible{outline:2px solid var(--green);outline-offset:2px;}
+
+  /* ---------- STATE DIAGRAM (signature element) ---------- */
+  .diagram-card{
+    border:1px solid var(--line);border-radius:6px;
+    background:var(--ink-2);padding:28px 20px 20px;
+  }
+  .diagram-card .cap{
+    font-family:var(--mono);font-size:12px;color:var(--soft);
+    display:flex;justify-content:space-between;margin-bottom:14px;
+    text-transform:uppercase;letter-spacing:0.08em;
+  }
+  .diagram-card svg{width:100%;height:auto;}
+  .state-label{font-family:var(--mono);font-size:11px;fill:var(--soft);}
+  .state-label.active{fill:var(--green);}
+  .state-title{font-family:var(--mono);font-size:12.5px;fill:#E7E9EE;font-weight:600;}
+  .state-desc{font-family:var(--sans);font-size:10.5px;fill:var(--soft);}
+
+  @media (prefers-reduced-motion: no-preference){
+    .pulse{ animation:travel 6s linear infinite; }
+    .node-ring{ animation:ring 6s linear infinite; }
+  }
+  @keyframes travel{
+    0%{offset-distance:0%;}
+    100%{offset-distance:100%;}
+  }
+  @keyframes ring{
+    0%,92%,100%{opacity:0;}
+    2%,10%{opacity:1;}
+  }
+
+  /* ---------- SECTIONS (paper) ---------- */
+  section.paper{background:var(--paper);color:var(--text-dark);}
+  .section-pad{padding:72px 0;}
+  .section-head{max-width:60ch;margin-bottom:44px;}
+  .tag{
+    font-family:var(--mono);font-size:12px;color:#8A6B2C;
+    text-transform:uppercase;letter-spacing:0.1em;margin:0 0 10px;
+  }
+  h2{font-family:var(--mono);font-size:clamp(24px,3vw,32px);margin:0 0 14px;letter-spacing:-0.01em;}
+  .section-head p{color:var(--muted-dark);font-size:16px;margin:0;}
+
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;}
+  .step{border-top:2px solid var(--text-dark);padding-top:16px;}
+  .step .num{font-family:var(--mono);font-size:13px;color:#8A6B2C;margin-bottom:10px;}
+  .step h3{font-family:var(--sans);font-size:17px;margin:0 0 8px;}
+  .step p{color:var(--muted-dark);font-size:14.5px;margin:0;}
+
+  @media (max-width:760px){
+    .steps{grid-template-columns:1fr;}
+  }
+
+  /* ---------- PROJECT CARD ---------- */
+  section.project{background:var(--ink);border-top:1px solid var(--line);border-bottom:1px solid var(--line);}
+  .project-grid{display:grid;grid-template-columns:1fr 1fr;gap:44px;align-items:center;}
+  @media (max-width:820px){.project-grid{grid-template-columns:1fr;}}
+  .project-fig{
+    border:1px solid var(--line);border-radius:6px;overflow:hidden;background:var(--ink-2);
+  }
+  .project-fig img{width:100%;}
+  .fig-fallback{
+    aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;
+    font-family:var(--mono);color:var(--soft);font-size:13px;text-align:center;padding:20px;
+  }
+  .badge-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
+  .badge{
+    font-family:var(--mono);font-size:11px;padding:4px 9px;border-radius:3px;
+    border:1px solid var(--line);color:var(--soft);text-transform:uppercase;letter-spacing:.06em;
+  }
+  .badge.warn{color:var(--amber);border-color:#4a3a1f;}
+  .badge.ok{color:var(--green);border-color:var(--green-dim);}
+  .project h2{margin-bottom:14px;}
+  .project p.desc{color:var(--soft);font-size:15.5px;margin:0 0 22px;}
+  .link-list{display:flex;flex-direction:column;gap:10px;font-family:var(--mono);font-size:13.5px;}
+  .link-list a{text-decoration:none;color:#E7E9EE;display:flex;align-items:center;gap:8px;}
+  .link-list a:hover{color:var(--green);}
+  .link-list a::before{content:'→';color:var(--green);}
+
+  /* ---------- SUBMIT ---------- */
+  section.submit{background:var(--paper);color:var(--text-dark);}
+  .submit-box{
+    border:1px solid #d8d3c4;border-radius:6px;background:#fff;
+    padding:34px;max-width:640px;
+  }
+  .submit-box .term{
+    font-family:var(--mono);font-size:12.5px;color:#8A6B2C;margin-bottom:10px;
+  }
+  .submit-box h3{margin:0 0 10px;font-family:var(--sans);font-size:19px;}
+  .submit-box p{color:var(--muted-dark);font-size:14.5px;margin:0 0 22px;}
+  .submit-box .btn-primary{background:var(--text-dark);color:#fff;}
+  .submit-box .btn-primary:hover{background:#000;}
+
+  /* ---------- FOOTER ---------- */
+  footer{background:var(--ink);padding:40px 0;border-top:1px solid var(--line);}
+  .footer-row{display:flex;justify-content:space-between;flex-wrap:wrap;gap:18px;
+    font-family:var(--mono);font-size:12.5px;color:var(--soft);}
+  .footer-row a{text-decoration:none;color:var(--soft);}
+  .footer-row a:hover{color:#fff;}
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <div class="brand"><span class="dot"></span> SYNBIO</div>
+    <nav class="links">
+      <a href="#project-01">Project 01</a>
+      <a href="#how-it-works">How it works</a>
+      <a href="#submit">Submit a circuit</a>
+      <a href="https://github.com/SynBio-Registry" target="_blank" rel="noopener">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap" style="display:grid;grid-template-columns:1.1fr 0.9fr;gap:48px;align-items:start;">
+    <div>
+      <p class="eyebrow">Open-access research initiative</p>
+      <h1>Blueprints for <span class="accent">programmable biology.</span></h1>
+      <p class="lede">SynBio designs and mathematically models genetic circuits that target complex diseases like cancer — then publishes the code and predictive models completely free, so scientists anywhere can use them.</p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="https://osf.io/p95fc" target="_blank" rel="noopener">Access open-source ODE models →</a>
+        <a class="btn btn-ghost" href="#project-01">See Project 01</a>
+      </div>
+    </div>
+
+    <div class="diagram-card">
+      <div class="cap"><span>Circuit logic states</span><span>dCas12f / p53</span></div>
+      <svg viewBox="0 0 340 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Four-state circuit diagram: Silenced, Reprogramming, Surveillance, High-Activation">
+        <defs>
+          <path id="wire" d="M40,40 L40,90 L170,90 L170,150 L300,150 L300,200" fill="none"/>
+        </defs>
+        <!-- wire path -->
+        <path d="M40,40 L40,90 L170,90 L170,150 L300,150 L300,200" fill="none" stroke="#26314A" stroke-width="2"/>
+        <!-- traveling pulse -->
+        <circle r="4" fill="#5FBF6A" class="pulse">
+          <animateMotion dur="6s" repeatCount="indefinite" path="M40,40 L40,90 L170,90 L170,150 L300,150 L300,200"/>
+        </circle>
+
+        <!-- node 0 -->
+        <circle cx="40" cy="40" r="7" fill="#111A2C" stroke="#93A0BE" stroke-width="1.5"/>
+        <text x="55" y="35" class="state-label">STATE 0</text>
+        <text x="55" y="49" class="state-title">Silenced</text>
+
+        <!-- node 1 -->
+        <circle cx="40" cy="90" r="7" fill="#111A2C" stroke="#93A0BE" stroke-width="1.5"/>
+        <text x="55" y="85" class="state-label">STATE 1</text>
+        <text x="55" y="99" class="state-title">Reprogramming</text>
+
+        <!-- node 2 -->
+        <circle cx="170" cy="150" r="7" fill="#111A2C" stroke="#93A0BE" stroke-width="1.5"/>
+        <text x="185" y="145" class="state-label">STATE 2</text>
+        <text x="185" y="159" class="state-title">Surveillance</text>
+
+        <!-- node 3 -->
+        <circle cx="300" cy="200" r="7" fill="#0B1220" stroke="#5FBF6A" stroke-width="2"/>
+        <circle cx="300" cy="200" r="12" fill="none" stroke="#5FBF6A" stroke-width="1" class="node-ring"/>
+        <text x="222" y="195" class="state-label active">STATE 3</text>
+        <text x="222" y="222" class="state-title" fill="#5FBF6A">High-Activation</text>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<section class="paper" id="how-it-works">
+  <div class="wrap section-pad">
+    <div class="section-head">
+      <p class="tag">The method</p>
+      <h2>Computation instead of a wet lab.</h2>
+      <p>No institutional lab access required. Every circuit on SynBio is designed and stress-tested entirely with free, open computational tools before a single base pair is proposed.</p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="num">01 — Design</div>
+        <h3>Circuit architecture</h3>
+        <p>Genetic logic is composed from documented parts — sensors, promoters, effector proteins — mapped to a specific disease mechanism.</p>
+      </div>
+      <div class="step">
+        <div class="num">02 — Model</div>
+        <h3>ODE &amp; Hill-function prediction</h3>
+        <p>Python and MATLAB are used to simulate circuit dynamics — production, degradation, feedback — and predict how the system behaves before it's built.</p>
+      </div>
+      <div class="step">
+        <div class="num">03 — Publish</div>
+        <h3>Free, reproducible release</h3>
+        <p>Code, parameters, and assumptions are published openly under permissive licenses, so any researcher can reproduce, question, or extend the work.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="project" id="project-01">
+  <div class="wrap section-pad project-grid">
+    <div class="project-fig">
+      <img src="figures/circuit_diagram.png" alt="dCas12f/p53 circuit architecture diagram" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+      <div class="fig-fallback" style="display:none;">Circuit diagram — figures/circuit_diagram.png</div>
+    </div>
+    <div>
+      <div class="badge-row">
+        <span class="badge">Project 01</span>
+        <span class="badge warn">In silico</span>
+        <span class="badge ok">Open source</span>
+      </div>
+      <h2>dCas12f / p53 Epigenetic Circuit</h2>
+      <p class="desc">A theoretical, feedback-controlled circuit that uses a compact dCas12f scaffold to dynamically regulate p53 transcriptional activity — without editing the underlying DNA — across four environmental logic states, from basal silencing to high-activation under oncogenic stress.</p>
+      <div class="link-list">
+        <a href="https://github.com/SynBio-Registry/dcas12f-p53-circuit" target="_blank" rel="noopener">View the repository on GitHub</a>
+        <a href="https://osf.io/p95fc" target="_blank" rel="noopener">Access the ODE models on OSF</a>
+        <a href="docs/model_writeup.md" target="_blank" rel="noopener">Read the full model writeup</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="submit" id="submit">
+  <div class="wrap section-pad">
+    <div class="section-head">
+      <p class="tag">Get involved</p>
+      <h2>Contribute a circuit.</h2>
+      <p>SynBio is built to scale beyond one project. If you've designed or modeled a genetic circuit, submit it for review — or join the researcher registry to collaborate on future work.</p>
+    </div>
+    <div class="submit-box">
+      <div class="term">$ submit --type=circuit-model</div>
+      <h3>Submit a circuit model / join the researcher registry</h3>
+      <p>Replace this button's link with your Google Form or Tally form URL once it's set up.</p>
+      <a class="btn btn-primary" href="#" target="_blank" rel="noopener">Open submission form →</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap footer-row">
+    <span>© 2026 SynBio — Open-access computational synthetic biology.</span>
+    <span>
+      <a href="https://github.com/SynBio-Registry" target="_blank" rel="noopener">GitHub</a>
+      &nbsp;·&nbsp;
+      <a href="https://osf.io/p95fc" target="_blank" rel="noopener">OSF</a>
+    </span>
+  </div>
+</footer>
+
+</body>
+</html>
